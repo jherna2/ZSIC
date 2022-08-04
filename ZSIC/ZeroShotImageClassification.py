@@ -170,6 +170,7 @@ class ZeroShotImageClassification():
               if kwargs["CLIP_image_features"] == 1:
                 torch.cuda.empty_cache()
                 return image_features
+            print('here')
             text = clip.tokenize(labels).to(device)
             text_features = self.model.encode_text(text)
         else:    
