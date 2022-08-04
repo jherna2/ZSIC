@@ -168,6 +168,7 @@ class ZeroShotImageClassification():
             image_features = self.model.encode_image(img)
             if "CLIP_image_features" in kwargs:
               if kwargs["CLIP_image_features"] == 1:
+                torch.cuda.empty_cache()
                 return image_features
             text = clip.tokenize(labels).to(device)
             text_features = self.model.encode_text(text)
@@ -175,6 +176,7 @@ class ZeroShotImageClassification():
             image_features = torch.tensor(self.model.encode(self._load_image(image)))
             if "CLIP_image_features" in kwargs:
               if kwargs["CLIP_image_features"] == 1:
+                torch.cuda.empty_cache()
                 return image_features
             text_features = torch.tensor(self.text_model.encode(labels))
         
