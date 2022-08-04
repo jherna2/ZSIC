@@ -195,4 +195,6 @@ class ZeroShotImageClassification():
         preds["image"] = image
         preds["scores"] = scores
         preds["labels"] = candidate_labels
+        torch.cuda.empty_cache()
+
         return preds
