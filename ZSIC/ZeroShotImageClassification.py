@@ -122,6 +122,8 @@ class ZeroShotImageClassification():
             top_k (`int`, *optional*, defaults to 5):
                 The number of top labels that will be returned by the pipeline. If the provided number is higher than
                 the number of labels available in the model configuration, it will default to the number of labels.
+            CLIP_image_features (`int`, *optional*):
+                Returns the CLIP image features when set to 1
 
         Return:
             A `dict` or a list of `dict`: Each result comes as a dictionary with the following keys:
@@ -162,11 +164,18 @@ class ZeroShotImageClassification():
 
         if str(type(self.model)) == "<class 'clip.model.CLIP'>":
             img = self.preprocess(self._load_image(image)).unsqueeze(0).to(device)
-            text = clip.tokenize(labels).to(device)
+            #text = clip.tokenize(labels).to(device)
             image_features = self.model.encode_image(img)
+            if "CLIP_image_features" in kwargs:
+              if kwargs["CLIP_image_features"] == 1:
+                return image_features
+            text = clip.tokenize(labels).to(device)
             text_features = self.model.encode_text(text)
         else:    
             image_features = torch.tensor(self.model.encode(self._load_image(image)))
+            if "CLIP_image_features" in kwargs:
+              if kwargs["CLIP_image_features"] == 1:
+                return image_features
             text_features = torch.tensor(self.text_model.encode(labels))
         
         sim_scores = util.cos_sim(text_features, image_features)
