@@ -7,8 +7,6 @@ import requests
 import numpy as np
 import os
 from sentence_transformers import SentenceTransformer, util
-import koila
-from koila import lazy
 
 
 class ZeroShotImageClassification():
