@@ -1,6 +1,5 @@
 import setuptools
 import os
-import koila
 
 os.system("pip install git+https://github.com/openai/CLIP.git") 
 os.system("pip install sentence-transformers")
