@@ -7,6 +7,7 @@ import requests
 import numpy as np
 import os
 from sentence_transformers import SentenceTransformer, util
+from koila import lazy
 
 
 class ZeroShotImageClassification():
@@ -166,6 +167,8 @@ class ZeroShotImageClassification():
             img = self.preprocess(self._load_image(image)).unsqueeze(0).to(device)
             #text = clip.tokenize(labels).to(device)
             image_features = self.model.encode_image(img)
+            #image_features  = lazy(self.model.encode_image(img), batch=0)
+
             if "CLIP_image_features" in kwargs:
               if kwargs["CLIP_image_features"] == 1:
                 torch.cuda.empty_cache()
@@ -174,12 +177,15 @@ class ZeroShotImageClassification():
             text = clip.tokenize(labels).to(device)
             text_features = self.model.encode_text(text)
         else:    
-            image_features = torch.tensor(self.model.encode(self._load_image(image)))
+            #image_features = torch.tensor(self.model.encode(self._load_image(image)))
+            image_features = lazy(torch.tensor(self.model.encode(self._load_image(image))), batch=0)
             if "CLIP_image_features" in kwargs:
               if kwargs["CLIP_image_features"] == 1:
                 torch.cuda.empty_cache()
                 return image_features
-            text_features = torch.tensor(self.text_model.encode(labels))
+            #text_features = torch.tensor(self.text_model.encode(labels))
+            text_features = lazy(orch.tensor(self.text_model.encode(labels)), batch=0)
+
         
         sim_scores = util.cos_sim(text_features, image_features)
         out = []
